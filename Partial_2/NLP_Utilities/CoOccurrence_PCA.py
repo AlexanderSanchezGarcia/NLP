@@ -63,7 +63,6 @@ class CoOccurrencePCA(Tokenizer):
         self.vocabulary = sorted(list(self.vocabulary))
     
     
-    """ Methods """
     def compute_cooccurrence_matrix(self) -> pd.DataFrame:
         """
         Creates a co-occurrence matrix based on word proximity within a window
