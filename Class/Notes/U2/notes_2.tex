@@ -1,0 +1,290 @@
+\documentclass[12pt]{article}
+
+% --------------------
+% Paquetes
+% --------------------
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{setspace}
+\usepackage{geometry}
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{soul}
+\usepackage{tabularx}
+\usepackage{booktabs}
+
+% --------------------
+% Márgenes
+% --------------------
+\geometry{
+  letterpaper,
+  left=2.5cm,
+  right=2.5cm,
+  top=2.5cm,
+  bottom=2.5cm
+}
+
+% --------------------
+% Documento
+% --------------------
+\begin{document}
+\thispagestyle{empty}
+
+% --------------------
+% Portada
+% --------------------
+\begin{center}
+
+{\LARGE \textbf{Instituto Politécnico Nacional}}\\[0.5cm]
+{\large Escuela Superior de Cómputo}\\[1.5cm]
+
+
+
+{\Huge \textbf{Procesamiento de Lenguaje Natural}}\\[0.5cm]
+{\large Segundo Parcial}\\[2cm]
+
+{\LARGE \textbf{Tareas}}\\[0.5cm]
+
+\end{center}
+
+\vfill
+
+\begin{minipage}{0.55\textwidth}
+\textbf{Alumno:}\\
+Sánchez García Miguel Alexander\\[1cm]
+
+\textbf{Grupo:} 6AV1\\
+\textbf{Carrera:} Licenciatura en Ciencia de Datos
+\end{minipage}
+\hfill
+\begin{minipage}{0.35\textwidth}
+\textbf{Profesor:}\\
+Ortiz Castillo Marco Antonio\\[1cm]
+
+\textbf{Fecha:}\\
+9 de enero, 2026
+\end{minipage}
+
+\newpage
+
+% --------------------
+% Contenido
+% --------------------
+\setstretch{1.3}
+
+
+\section*{\hl{One-Hot Encoding}}
+
+Dado el vector de palabras, se deben eliminar y contar aquellas palabras que estén repetidas.
+
+\subsection*{Ejemplo}
+
+Sea el siguiente vector de palabras:
+
+\begin{equation}
+\text{vector} = [\text{``Marco''}, \text{``Marco''}, \text{``Antonio''}, \text{``Ortiz''}, \text{``Ortiz''}]
+\end{equation}
+
+El primer paso consiste en crear un vector que contenga únicamente las palabras únicas.
+
+\subsection*{Vector de palabras únicas}
+
+\begin{equation}
+\text{vector}_\text{unic} = [\text{``Marco''}, \text{``Antonio''}, \text{``Ortiz''}]
+\end{equation}
+
+\section*{\hl{Bolsa de Palabras (Bag of Words, BoW)}}
+
+La Bolsa de Palabras es una técnica de cuantificación de las palabras.  
+Junto con TF--IDF, permite dotar al documento de valores numéricos; también se dice que extrae características del documento.
+
+Es un paso previo a otros algoritmos, y se da por hecho que ya ha existido un pre-procesamiento del texto.  
+Se puede expresar mediante una matriz y es un pre-algoritmo útil para la obtención de palabras clave.
+
+\subsection*{Ejemplo}
+
+Sea el siguiente documento:
+
+\begin{quote}
+Tenemos una invitada que habla francés.  
+El francés no toma como invitada a cualquier persona, debe ser de habla francesa, puesto que cualquier otra persona será excluida.
+\end{quote}
+
+Por cada palabra se crea un vector de dimensión $n$, donde $n$ es el total de palabras únicas del documento.
+
+\subsection*{Vector de palabras únicas}
+
+\begin{equation}
+\begin{aligned}
+\text{vector}_{\text{único}} = [&\text{``Tenemos''}, \text{``invitada''}, \text{``habla''}, \text{``francés''}, \text{``no''}, \text{``toma''}, \\
+&\text{``cualquier''}, \text{``persona''}, \text{``debe''}, \text{``ser''}, \text{``francesa''}, \\
+&\text{``puesto''}, \text{``otra''}, \text{``será''}, \text{``excluida''}]
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+n = 15
+\end{equation}
+
+\subsection*{Representación vectorial}
+
+Cada palabra se representa como un vector donde la posición correspondiente indica el número de apariciones de dicha palabra en el documento.
+
+\begin{align}
+\text{Tenemos} &= [1, 0, 0, 0, \ldots, 0] \\
+\text{invitada} &= [0, 2, 0, 0, \ldots, 0] \\
+\text{habla} &= [0, 0, 1, 0, \ldots, 0] \\
+\vdots &
+\end{align}
+
+\subsection*{Observaciones}
+
+Para reducir la dimensionalidad del modelo, se recomienda utilizar algoritmos de reducción de dimensión como PCA o SVD.
+
+Asimismo, también puede emplearse lematización como parte del pre-procesamiento.
+
+\section*{\hl{Bolsa de Palabras en múltiples documentos}}
+
+La bolsa de palabras suele usarse en varios documentos, en donde se obtendrá un solo vector de palabras que caracterice a todo el conjunto de documentos.  
+Este vector se obtiene a partir de un vector único de palabras construido considerando todos los documentos.
+
+\subsection*{Ejemplo}
+
+Se tienen los siguientes documentos:
+
+\begin{itemize}
+    \item \textbf{Doc 1:} José piensa que canta bello.
+    \item \textbf{Doc 2:} José podría ir a clases de canto.
+    \item \textbf{Doc 3:} Su amigo podría decirle la verdad de cómo canta.
+\end{itemize}
+
+\subsection*{Matriz BoW}
+
+\paragraph{a) Vector único de palabras}
+
+A partir de los documentos anteriores, se construye el siguiente vector único de palabras:
+
+\begin{equation}
+\begin{aligned}
+\text{vector}_{\text{único}} = [&\text{``José''}, \text{``piensa''}, \text{``canta''}, \text{``bello''}, \text{``podría''}, \text{``ir''}, \\
+&\text{``clases''}, \text{``canto''}, \text{``su''}, \text{``amigo''}, \text{``decirle''}, \\
+&\text{``verdad''}, \text{``cómo''}]
+\end{aligned}
+\end{equation}
+
+\paragraph{b) Vectores por documento}
+
+Cada documento se representa como un vector donde cada posición indica el número de veces que aparece la palabra correspondiente del vector único.
+
+\begin{align}
+\vec{v}_{\text{doc}_1} &= [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0] \\
+\vec{v}_{\text{doc}_2} &= [1, 0, 0, 0, 1, 1, 1, 2, 0, 0, 0, 0, 0] \\
+\vec{v}_{\text{doc}_3} &= [0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1]
+\end{align}
+
+\section*{\hl{Embeddings}}
+
+Son representaciones numéricas puestas en un vector de dimensión reducida que captura la relación semántica y sintáctica de las palabras. A diferencia de otros métodos que la representación es binaria, generalmente usan valores entre $-1$ y $1$ con todos los números reales que puede haber entre estos. 
+
+\textbf{marco} = $[-0.35, .55, .777]$
+
+\vspace{1em}
+
+\section*{\hl{Similitud Coseno}}
+
+Es una métrica de similitud que, en lugar de \hl{evaluar la longitud} o tamaño, evalúa la dirección en la que apuntan dos vectores.
+
+Especialmente útil cuando se tienen representaciones vectoriales de alta dimensión.
+
+\vspace{1em}
+
+\begin{minipage}[t]{0.5\textwidth}
+    La similitud coseno (Que en realidad mide el ángulo entre dos vectores) regresa un valor entre $-1$ y $1$.
+    
+    \vspace{1em}
+    Cuando el valor es $1$ se dice que las palabras son totalmente similares, cuando es $0$, los vectores son ortogonales y por tanto diferentes. Finalmente cuando es $-1$, indica que sus vectores son similares pero que apuntan a direcciones contrarias.
+    
+    \vspace{1em}
+    \textbf{Ejemplo:} Perro - Gato
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.4\textwidth}
+    \centering
+    \[ \cos(A, B) = \frac{A \cdot B}{\|A\| \cdot \|B\|} \]
+    
+    \flushleft
+    \textbf{Ventajas:}
+    \begin{itemize}
+        \item Recomendado para espacios de alta dimensión.
+        \item Insensibles a la magnitud.
+        \item Aplicable en todo dominio.
+    \end{itemize}
+\end{minipage}
+
+
+\section*{\hl{Expresiones regulares}}
+
+Son un conjunto de caracteres que definen una regla de coincidencia para obtener un conjunto específico de palabras, por ejemplo, fechas, verbos, números telefónicos, etc...
+
+\vspace{1em}
+
+Permiten eliminar signos de puntuación, números o símbolos:
+\begin{itemize}
+    \item Tokenizar por espacios o puntos.
+    \item Extraer información.
+    \item Filtrar palabras.
+\end{itemize}
+
+\vspace{2em}
+
+\begin{center}
+\begin{tabular}{l @{\hspace{4em}} l}
+    \textbf{Expresión} & \textbf{Significado} \\
+    \rule{0pt}{4ex} % Espacio extra
+    \verb|\d+| & 1 o más cifras \\
+    \rule{0pt}{3ex}
+    \verb|\b\w+\b| & una palabra completa \\
+    \rule{0pt}{3ex}
+    \verb|[A-Z][a-z]+| & palabra inicia en mayúscula \\
+    \rule{0pt}{3ex}
+    \verb|https: //\S+| & URL \\
+    \rule{0pt}{3ex}
+    \verb|@\w+| & menciones en redes \\
+\end{tabular}
+\end{center}
+
+\vspace{2em}
+
+Librerías utilizadas para hacer búsqueda por expresiones regulares es ``re'', NLTK y SpaCy.
+
+
+\section*{\centering \hl{Tarea: Diferencia entre TSNE y PCA}}
+
+Tanto PCA (Análisis de componentes principales) como t-SNE (Incrustación estocástica de vecinos distribuida en t) son utilizados para reducción de dimensionalidad, pero tienen objetivos distintos.
+
+\vspace{1.5em}
+
+\begin{tabularx}{\textwidth}{p{3cm} X X}
+    \toprule
+    & \textbf{PCA} & \textbf{t-SNE} \\
+    \midrule
+    \textbf{Tipo de método} & Lineal & No-Lineal \\
+    \addlinespace
+    \textbf{Objetivo principal} & Maximiza varianza & Preserva vecindarios \\
+    \addlinespace
+    \textbf{Qué se interpreta} & Componentes (Qué variables pesan) & Ejes no interpretables \\
+    \addlinespace
+    \textbf{Uso típico} & Feature engineering, evita colinealidad, acelerar modelos, análisis exploratorio & Visualización de 2D/3D datos de alta dimensión para ver agrupamientos locales. \\
+    \addlinespace
+    \textbf{Determinismo} & Determinista (dado el preprocesamiento) & Estocástico (depende de semilla e hiperparámetros) \\
+    \addlinespace
+    \textbf{Hiperparámetros} & \# componentes & Perplexity, learning rate, iteraciones, semilla \\
+    \addlinespace
+    \textbf{Escalabilidad} & Muy eficiente, escala bien & Más costoso y puede ser lento en datasets grandes \\
+    \bottomrule
+\end{tabularx}
+
+
+\end{document}

@@ -1,5 +1,12 @@
 # Data directories
-Partial_2/Data/**
+Partial_2/Data/
+Partial_3/Data/
+
+# Binary files
+*.pdf
+*.wav
+*.mp3
+*.mp4
 
 # Python cache
 __pycache__/
@@ -15,6 +22,7 @@ __pycache__/
 *.log
 *.out
 *.synctex.gz
+*.synctex(busy)
 *.bbl
 *.blg
 

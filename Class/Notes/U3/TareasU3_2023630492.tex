@@ -1,0 +1,246 @@
+\documentclass[12pt]{article}
+
+% --------------------
+% Paquetes
+% --------------------
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{setspace}
+\usepackage{geometry}
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{soul}
+\usepackage{tabularx}
+\usepackage{booktabs}
+
+% --------------------
+% Márgenes
+% --------------------
+\geometry{
+  letterpaper,
+  left=2.5cm,
+  right=2.5cm,
+  top=2.5cm,
+  bottom=2.5cm
+}
+
+\geometry{margin=2.5cm} % Ajusta los márgenes para tener más espacio
+\usepackage{listings}
+
+
+% Configuración de listings para que el código no se salga de la página
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,         % Activa el salto de línea automático
+    breakatwhitespace=false, % Permite saltos aunque no haya espacios
+    columns=fullflexible,
+    frame=single,            % Añade un recuadro opcional
+    keepspaces=true,
+    literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1 % Soporte para acentos
+}
+
+% --------------------
+% Documento
+% --------------------
+\begin{document}
+\thispagestyle{empty}
+
+% --------------------
+% Portada
+% --------------------
+\begin{center}
+
+{\LARGE \textbf{Instituto Politécnico Nacional}}\\[0.5cm]
+{\large Escuela Superior de Cómputo}\\[1.5cm]
+
+
+
+{\Huge \textbf{Procesamiento de Lenguaje Natural}}\\[0.5cm]
+{\large Tercer Parcial}\\[2cm]
+
+{\LARGE \textbf{Tareas}}\\[0.5cm]
+
+\end{center}
+
+\vfill
+
+\begin{minipage}{0.55\textwidth}
+\textbf{Alumno:}\\
+Sánchez García Miguel Alexander\\[1cm]
+
+\textbf{Grupo:} 6AV1\\
+\textbf{Carrera:} Licenciatura en Ciencia de Datos
+\end{minipage}
+\hfill
+\begin{minipage}{0.35\textwidth}
+\textbf{Profesor:}\\
+Ortiz Castillo Marco Antonio\\[1cm]
+
+\textbf{Fecha:}\\
+9 de enero, 2026
+\end{minipage}
+
+\newpage
+
+% --------------------
+% Contenido
+% --------------------
+\setstretch{1.3}
+
+\section*{\hl{N - gramas}}
+
+Son utilizados para obtener secuencias de ``n'' palabras. La idea es obtener una mayor cantidad de contexto en función de la ``n''.
+
+\vspace{1em}
+
+\textbf{Por ejemplo:} \underline{No} \underline{sé} diferencia entre algoritmos PLN
+
+\vspace{1em}
+
+\begin{minipage}[t]{0.45\textwidth}
+    \textbf{Una secuencia para $n=1$}
+    \begin{itemize}
+        \item No\_sé
+        \item sé\_diferencia
+        \item diferencia\_entre
+        \item \dots
+        \item algoritmos\_PLN
+    \end{itemize}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.45\textwidth}
+    \textbf{Para $n=2$}
+    \begin{itemize}
+        \item No sé \_ diferencia
+        \item sé diferencia \_ entre
+        \item diferencia entre \_ algoritmos
+    \end{itemize}
+\end{minipage}
+
+\vspace{2em}
+
+El siguiente paso consiste en vectorizar el conjunto de palabras, con lo cual se genera embeddings.
+
+\vspace{1.5em}
+
+$\rightarrow$ \textbf{PCA}
+
+\begin{itemize}
+    \item No [ .5 \quad .3 \quad .9 ]
+    \item Sé [ .1 \quad .1 \quad .7 ] , algoritmo de afinación
+\end{itemize}
+
+
+\section*{\hl{Topic Modeling}}
+
+Conjunto de técnicas para descubrir temas ``ocultos'' en una colección de textos, encontrando patrones de co-ocurrencia de palabras. Existe LDA, LSA y LSI.
+
+\subsection*{Latent Dirichlet Allocation (LDA)}
+LDA es de los más usados al ser un modelo probabilístico generativo.
+
+\begin{itemize}
+    \item Cada doc. se modela como una mezcla de tópicos ($\theta_d$).
+    \item Cada tópico se modela como una distribución de palabras ($\rho_k$).
+\end{itemize}
+
+\textbf{Hiperparámetros:}
+\begin{itemize}
+    \item \textbf{$\alpha$:} Influye en la cantidad de tópicos que tiene un doc (pocos dominantes o muchos mezclados).
+    \item \textbf{$\beta$:} Influye en si un tópico usa pocas palabras características o una distribución más plana.
+\end{itemize}
+
+Para inferir tópicos el modelo suele usar métodos como Bayes variacional, MCMC o Gibbs sampling.
+
+\textbf{Salida:} Proporciones de tópicos por documento y palabras más probables por tópico.
+
+\vspace{1em}
+
+\section*{Notebook: LDA (Latent Dirichlet Allocation)}
+
+\textbf{Descripción:} Este notebook implementa el análisis de tópicos usando Latent Dirichlet Allocation (LDA) con documentos en español. Se realiza preprocesamiento de texto incluyendo tokenización, eliminación de stopwords y lematización antes de aplicar el modelo LDA.
+
+\subsection*{Celdas de Importación y Datos}
+
+\begin{lstlisting}[language=Python]
+from gensim.test.utils import common_corpus
+import gensim
+from gensim.models.ldamulticore import LdaMulticore
+from nltk.stem import WordNetLemmatizer
+from nltk import word_tokenize
+from nltk.corpus import stopwords
+import string
+import matplotlib.pyplot as plt
+from gensim.utils import simple_preprocess
+from gensim.models import CoherenceModel
+import nltk
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
+from gensim import corpora
+from gensim.models import LdaModel
+from gensim.models import lsimodel
+
+# Documentos en ingles
+doc_1_en = "Sugar is bad to consume. My sister likes to have sugar, but not my father."
+doc_2_en = "The theory of relativity was proposed by Albert Einstein in 1905."
+doc_3_en = "Many people believe that sugar is not good for your health."
+doc_4_en = "Einstein developed the theory of general relativity."
+doc_5_en = "The health benefits of regular exercise are well documented."
+doc_6_en = "Climate change is affecting ecosystems around the world."
+doc_7_en = "Machine learning algorithms can predict patterns in data."
+doc_8_en = "Healthy eating habits include consuming less sugar and more vegetables."
+doc_9_en = "Artificial intelligence is revolutionizing many industries."
+doc_10_en = "Physical activity reduces the risk of chronic diseases."
+
+# Documentos en espanol
+doc_1_es = "El azucar es malo para consumir. A mi hermana le gusta el azucar, pero no a mi padre."
+doc_2_es = "La teoria de la relatividad fue propuesta por Albert Einstein in 1905."
+doc_3_es = "Mucha gente cree que el azucar no es bueno para la salud."
+doc_4_es = "Einstein desarrollo la teoria de la relatividad general."
+doc_5_es = "Los beneficios para la salud del ejercicio regular estan bien documentados."
+doc_6_es = "El cambio climatico esta afectando los ecosistemas alrededor del mundo."
+doc_7_es = "Los algoritmos de aprendizaje automatico pueden predecir patrones en los datos."
+doc_8_es = "Los habitos alimenticios saludables incluyen consumir menos azucar y mas vegetales."
+doc_9_es = "La inteligencia artificial esta revolucionando muchas industrias."
+doc_10_es = "La actividad fisica reduce el riesgo de enfermedades cronicas."
+\end{lstlisting}
+
+\subsection*{Procesamiento y Modelado}
+
+\begin{lstlisting}[language=Python]
+# Usar documentos en espanol
+corpus = [doc_1_es, doc_2_es, doc_3_es, doc_4_es, doc_5_es, doc_6_es, doc_7_es, doc_8_es, doc_9_es, doc_10_es]
+stop = set(stopwords.words('spanish'))
+exclude = set(string.punctuation)
+lemma = WordNetLemmatizer()
+
+def clean(doc):
+    stop_free = " ".join([i for i in doc.lower().split() if i not in stop])
+    punc_free = ''.join(ch for ch in stop_free if ch not in exclude)
+    normalized = " ".join(lemma.lemmatize(word) for word in punc_free.split())
+    return normalized
+
+clean_corpus = [clean(doc).split() for doc in corpus]
+dictionary = corpora.Dictionary(clean_corpus)
+doc_term_matrix = [dictionary.doc2bow(doc) for doc in clean_corpus]
+
+# Entrenar el modelo LDA
+lda_model = LdaModel(doc_term_matrix, num_topics=3, id2word=dictionary, passes=15)
+
+# Ver los topicos
+print("TOPICOS ENCONTRADOS")
+for idx, topic in lda_model.print_topics(-1):
+    print(f'\nTopico {idx}:')
+    print(topic)
+
+print("DOCUMENTOS PROCESADOS")
+print(f"Total de documentos: {len(clean_corpus)}")
+print(f"Vocabulario Unico: {len(dictionary)}")
+\end{lstlisting}
+
+
+\end{document}
